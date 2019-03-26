@@ -1,5 +1,5 @@
-from Parser import Parser
-import os
+from Parser.Parser import Parser
+import os, re
 
 def main():
 
@@ -12,8 +12,25 @@ def trainAI():
 
     parser = Parser('./data/train')
 
-    directoryList = len(parser.listAllInDirectory())
-    print('The length of directory is \n'+str(directoryList))
+    directoryList = parser.listAllInDirectory()
+
+    #print(os.scandir('./data/train'))
+
+    for file in os.scandir('./data/train'):
+        f = open(file,'r')
+        lst = (re.split('\[\^a-zA-Z\]', f.read()))[0].split(" ")
+        print(lst)
+        break
+
+
+    # string = 'well hello there'
+    # words = re.split('\[\^a-zA-Z\]', string)
+    # string2 = string.split(" ")
+    # words2 = words[0].split(" ")
+    # print(words2)
+
+
+
 
     
 
