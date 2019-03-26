@@ -12,30 +12,27 @@ def trainAI():
 
     parser = Parser('./data/train')
 
-    directoryList = parser.listAllInDirectory()
-
-    #print(os.scandir('./data/train'))
+    globalVocab = []
 
     for file in os.scandir('./data/train'):
         f = open(file,'r')
-        lst = (re.split('\[\^a-zA-Z\]', f.read()))[0].split(" ")
-        print(lst)
-        break
+        fileVocab = (re.split('\[\^a-zA-Z\]', f.read()))[0].split(" ")
 
+        globalVocab = mergeVocab(globalVocab, fileVocab)
+        print(file)
+        f.close()
 
-    # string = 'well hello there'
-    # words = re.split('\[\^a-zA-Z\]', string)
-    # string2 = string.split(" ")
-    # words2 = words[0].split(" ")
-    # print(words2)
+    print(globalVocab)
 
+def mergeVocab(globalVocab, fileVocab):
 
+    for word in fileVocab:
+        if word in globalVocab:
+            pass
+        else:
+            globalVocab.append(word)
 
-
-    
-
-
-
+    return globalVocab
 
 if __name__ == "__main__":
     main()
