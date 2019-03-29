@@ -4,11 +4,16 @@ class Parser:
     def __init__(self, directory):
         self.directory = directory
         self.globalVocab = []
+        self.globalVocabHam = []
+        self.globalVocabSpam = []
         self.wordsDict = {}
+        self.wordsDictHam = {}
+        self.wordsDictSpam = {}
 
     def start(self):
 
         for file in os.scandir(self.directory):
+
             f = open(file, 'r')
             vocabTemp = re.split('[^a-zA-Z]', f.read())
             vocabTemp2 = list(filter(('').__ne__, vocabTemp))
@@ -16,11 +21,17 @@ class Parser:
             # lowercase for all elements
             fileVocab = [x.lower() for x in vocabTemp2]
 
-            globalVocab = self.mergeVocab(self.globalVocab, fileVocab, self.wordsDict)
+            if file.name.split("-")[1] == 'ham':
+                self.globalVocabHam = self.mergeVocab(self.globalVocabHam, fileVocab, self.wordsDictHam)
+                print('in ham')
+                print(self.wordsDictHam)
+            else:
+                self.globalVocabSpam = self.mergeVocab(self.globalVocabSpam, fileVocab, self.wordsDictSpam)
+                print('in spam')
+            #self.globalVocab = self.mergeVocab(self.globalVocab, fileVocab, self.wordsDict)
 
             # print the file name as the program reads the file
             print(file)
-            print(self.wordsDict)
             f.close()
 
         print(self.globalVocab)
@@ -36,4 +47,6 @@ class Parser:
                 wordsDict[word] = 1
 
         return globalVocab
+
+
 
