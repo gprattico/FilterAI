@@ -37,9 +37,9 @@ class Parser:
 
         for word in fileVocab:
             if word in wordsDict:
-                wordsDict[word] = wordsDict[word] + 1
+                wordsDict[word]['frequency'] = wordsDict[word]['frequency'] + 1
             else:
-                wordsDict[word] = 1
+                wordsDict[word] = {'frequency': 1}
 
         return wordsDict
 
@@ -48,12 +48,12 @@ class Parser:
         #add any word from ham dict to spam dict if spam doesnt have it
         for key in wordsDictHam:
             if key not in wordsDictSpam:
-                wordsDictSpam[key] = 0
+                wordsDictSpam[key] = {'frequency': 0}
 
         #add any words in spam dict to ham dict if ham doesnt it
         for key in wordsDictSpam:
             if key not in wordsDictHam:
-                wordsDictHam[key] = 0
+                wordsDictHam[key] = {'frequency': 0}
 
 
 
