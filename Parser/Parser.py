@@ -3,10 +3,6 @@ import os, re
 class Parser:
     def __init__(self, directory):
         self.directory = directory
-        self.globalVocab = []
-        self.globalVocabHam = []
-        self.globalVocabSpam = []
-        self.wordsDict = {}
         self.wordsDictHam = {}
         self.wordsDictSpam = {}
 
@@ -22,31 +18,43 @@ class Parser:
             fileVocab = [x.lower() for x in vocabTemp2]
 
             if file.name.split("-")[1] == 'ham':
-                self.globalVocabHam = self.mergeVocab(self.globalVocabHam, fileVocab, self.wordsDictHam)
-                print('in ham')
-                print(self.wordsDictHam)
+                self.wordsDictHam = self.mergeVocab(self.wordsDictHam, fileVocab)
+                print('processing as ham')
             else:
-                self.globalVocabSpam = self.mergeVocab(self.globalVocabSpam, fileVocab, self.wordsDictSpam)
-                print('in spam')
-            #self.globalVocab = self.mergeVocab(self.globalVocab, fileVocab, self.wordsDict)
+                self.wordsDictSpam = self.mergeVocab(self.wordsDictSpam, fileVocab)
+                print('processing as spam')
 
             # print the file name as the program reads the file
             print(file)
             f.close()
 
-        print(self.globalVocab)
-        print(self.wordsDict)
+        self.checkForZeroFrequencyWords(self.wordsDictHam, self.wordsDictSpam)
 
-    def mergeVocab(self, globalVocab, fileVocab, wordsDict):
+        print('DONE')
+
+
+    def mergeVocab(self, wordsDict, fileVocab):
 
         for word in fileVocab:
-            if word in globalVocab:
+            if word in wordsDict:
                 wordsDict[word] = wordsDict[word] + 1
             else:
-                globalVocab.append(word)
                 wordsDict[word] = 1
 
-        return globalVocab
+        return wordsDict
+
+    def checkForZeroFrequencyWords(self,wordsDictHam, wordsDictSpam):
+
+        #add any word from ham dict to spam dict if spam doesnt have it
+        for key in wordsDictHam:
+            if key not in wordsDictSpam:
+                wordsDictSpam[key] = 0
+
+        #add any words in spam dict to ham dict if ham doesnt it
+        for key in wordsDictSpam:
+            if key not in wordsDictHam:
+                wordsDictHam[key] = 0
+
 
 
 
