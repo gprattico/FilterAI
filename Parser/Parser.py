@@ -1,24 +1,39 @@
-import os
+import os, re
 
 class Parser:
     def __init__(self, directory):
         self.directory = directory
-        self.vocabulary = []
+        self.globalVocab = []
+        self.wordsDict = {}
 
+    def start(self):
 
-    def parseFile(self, filename):
+        for file in os.scandir(self.directory):
+            f = open(file, 'r')
+            vocabTemp = re.split('[^a-zA-Z]', f.read())
+            vocabTemp2 = list(filter(('').__ne__, vocabTemp))
 
-        #parse the file
-        lst = []
+            # lowercase for all elements
+            fileVocab = [x.lower() for x in vocabTemp2]
 
-        return lst
+            globalVocab = self.mergeVocab(self.globalVocab, fileVocab, self.wordsDict)
 
-    def getVocabulary(self):
+            # print the file name as the program reads the file
+            print(file)
+            print(self.wordsDict)
+            f.close()
 
-        return self.vocabulary
+        print(self.globalVocab)
+        print(self.wordsDict)
 
-    def listAllInDirectory(self):
+    def mergeVocab(self, globalVocab, fileVocab, wordsDict):
 
-        lst = os.listdir(self.directory)
+        for word in fileVocab:
+            if word in globalVocab:
+                wordsDict[word] = wordsDict[word] + 1
+            else:
+                globalVocab.append(word)
+                wordsDict[word] = 1
 
-        return lst
+        return globalVocab
+
