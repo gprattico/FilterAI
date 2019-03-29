@@ -5,6 +5,8 @@ class Parser:
         self.directory = directory
         self.wordsDictHam = {}
         self.wordsDictSpam = {}
+        self.totalWordsHam = 0
+        self.totalWordsSpam = 0
 
     def start(self):
 
@@ -19,9 +21,11 @@ class Parser:
 
             if file.name.split("-")[1] == 'ham':
                 self.wordsDictHam = self.mergeVocab(self.wordsDictHam, fileVocab)
+                self.totalWordsHam = self.totalWordsHam + len(fileVocab)
                 print('processing as ham')
             else:
                 self.wordsDictSpam = self.mergeVocab(self.wordsDictSpam, fileVocab)
+                self.totalWordsSpam = self.totalWordsSpam + len(fileVocab)
                 print('processing as spam')
 
             # print the file name as the program reads the file
@@ -30,8 +34,11 @@ class Parser:
 
         self.checkForZeroFrequencyWords(self.wordsDictHam, self.wordsDictSpam)
 
-        print('DONE')
+        print('Frequencies obtained, generating probabilities...')
 
+        self.computeProbabilities(self.wordsDictHam, self.wordsDictSpam)
+        print('total words ham: '+str(self.totalWordsHam))
+        print(self.wordsDictHam['return'])
 
     def mergeVocab(self, wordsDict, fileVocab):
 
@@ -55,6 +62,12 @@ class Parser:
             if key not in wordsDictHam:
                 wordsDictHam[key] = {'frequency': 0}
 
+    def computeProbabilities(self, wordsDictHam, wordsDictSpam):
 
+        for word in wordsDictHam:
+            wordsDictHam[word]['probability'] = wordsDictHam[word]['frequency']/self.totalWordsHam
+
+        for word in wordsDictSpam:
+            wordsDictSpam[word]['probability'] = wordsDictHam[word]['frequency']/self.totalWordsSpam
 
 
