@@ -1,4 +1,4 @@
-import os, re
+import os, re, copy
 
 class Parser:
     def __init__(self, directory):
@@ -7,6 +7,9 @@ class Parser:
         self.wordsDictSpam = {}
         self.totalWordsHam = 0
         self.totalWordsSpam = 0
+        self.VocabSizeSmoothed = 0
+        self.smoothedHamDict = {}
+        self.smoothedSpamDict = {}
 
     def start(self):
 
@@ -32,13 +35,23 @@ class Parser:
             print(file)
             f.close()
 
+        #check for 0 frequency words
         self.checkForZeroFrequencyWords(self.wordsDictHam, self.wordsDictSpam)
-
         print('Frequencies obtained, generating probabilities...')
 
+        #compute probabilities
         self.computeProbabilities(self.wordsDictHam, self.wordsDictSpam)
-        print('total words ham: '+str(self.totalWordsHam))
-        print(self.wordsDictHam['return'])
+
+        print('ham vocab size' + str(len(self.wordsDictHam)))
+        print('spam vocab size' + str(len(self.wordsDictSpam)))
+
+        #compute smoothing
+        self.addSmoothing(0.5, self.wordsDictHam, self.wordsDictSpam)
+
+        print('pre smoothed frequency and prob:'+str(self.wordsDictHam['return']['frequency'])+' '+str(self.wordsDictHam['return']['probability']))
+        print('post smoothed frequency and prob:' + str(self.smoothedHamDict['return']['frequency']) + ' ' + str(self.smoothedHamDict['return']['probability']))
+        print(str(self.VocabSizeSmoothed))
+
 
     def mergeVocab(self, wordsDict, fileVocab):
 
@@ -69,5 +82,27 @@ class Parser:
 
         for word in wordsDictSpam:
             wordsDictSpam[word]['probability'] = wordsDictHam[word]['frequency']/self.totalWordsSpam
+
+    def addSmoothing(self, smoothingValue, wordsDictHam, wordsDictSpam):
+
+        #increase the total words in the class
+        vocabSize = len(wordsDictHam)
+        self.VocabSizeSmoothed = self.totalWordsHam + smoothingValue*vocabSize
+
+        self.smoothedHamDict = copy.deepcopy(self.wordsDictHam)
+        self.smoothedSpamDict = copy.deepcopy(self.wordsDictSpam)
+
+        #add smoothing to every word frequency
+        for word in self.smoothedHamDict:
+            self.smoothedHamDict[word]['frequency'] = self.smoothedHamDict[word]['frequency'] + smoothingValue
+            self.smoothedHamDict[word]['probability'] = self.smoothedHamDict[word]['frequency']/self.VocabSizeSmoothed
+
+        for word in self.smoothedSpamDict:
+            self.smoothedSpamDict[word]['frequency'] = self.smoothedSpamDict[word]['frequency'] + smoothingValue
+            self.smoothedSpamDict[word]['probability'] = self.smoothedSpamDict[word]['frequency']/self.VocabSizeSmoothed
+
+
+
+
 
 
