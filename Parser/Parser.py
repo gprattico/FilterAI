@@ -10,8 +10,10 @@ class Parser:
         self.VocabSizeSmoothed = 0
         self.smoothedHamDict = {}
         self.smoothedSpamDict = {}
+        self.totalEmailsHam = 0
+        self.totalEmailsSpam = 0
 
-    def start(self):
+    def train(self):
 
         for file in os.scandir(self.directory):
 
@@ -25,10 +27,12 @@ class Parser:
             if file.name.split("-")[1] == 'ham':
                 self.wordsDictHam = self.mergeVocab(self.wordsDictHam, fileVocab)
                 self.totalWordsHam = self.totalWordsHam + len(fileVocab)
+                self.totalEmailsHam += 1
                 print('processing as ham')
             else:
                 self.wordsDictSpam = self.mergeVocab(self.wordsDictSpam, fileVocab)
                 self.totalWordsSpam = self.totalWordsSpam + len(fileVocab)
+                self.totalEmailsSpam+= 1
                 print('processing as spam')
 
             # print the file name as the program reads the file
@@ -54,6 +58,9 @@ class Parser:
 
         filename = 'model.txt'
         self.writeToFile(filename)
+
+        #classify each test email
+        self.classifyEmails()
 
     def mergeVocab(self, wordsDict, fileVocab):
 
@@ -112,9 +119,6 @@ class Parser:
         #open a new one
         f = open(name, "x")
 
-        #generate sorted vocab
-        sortedList = sorted(self.smoothedHamDict)
-
         index = 1
         for key in sorted(self.smoothedHamDict.keys()):
 
@@ -123,8 +127,25 @@ class Parser:
                     str(self.smoothedSpamDict[key]['probability'])+'\r')
             index += 1
 
-        if index == 4:
-            quit(0)
+        f.close()
+        print('Model created.')
+
+    def classifyEmails(self, directory):
+
+        #for every file
+
+            #for every word, if its in the model, grab its probability
+            #log sum of all the words and class type
+
+            #repeat the calcs for the other class
+
+            #check which has higher pr
+
+            #write to file baseline
+
+
+
+
 
 
 

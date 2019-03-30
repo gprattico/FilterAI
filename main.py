@@ -6,7 +6,8 @@ def main():
     print('hello')
 
     parser = Parser('./data/train')
-    parser.start()
+    parser.train()
+    parser.classifyEmails('./data/test')
 
 if __name__ == "__main__":
     main()
