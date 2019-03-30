@@ -48,10 +48,12 @@ class Parser:
         #compute smoothing
         self.addSmoothing(0.5, self.wordsDictHam, self.wordsDictSpam)
 
-        print('pre smoothed frequency and prob:'+str(self.wordsDictHam['return']['frequency'])+' '+str(self.wordsDictHam['return']['probability']))
-        print('post smoothed frequency and prob:' + str(self.smoothedHamDict['return']['frequency']) + ' ' + str(self.smoothedHamDict['return']['probability']))
-        print(str(self.VocabSizeSmoothed))
+        # print('pre smoothed frequency and prob:'+str(self.wordsDictHam['return']['frequency'])+' '+str(self.wordsDictHam['return']['probability']))
+        # print('post smoothed frequency and prob:' + str(self.smoothedHamDict['return']['frequency']) + ' ' + str(self.smoothedHamDict['return']['probability']))
+        # print(str(self.VocabSizeSmoothed))
 
+        filename = 'model.txt'
+        self.writeToFile(filename)
 
     def mergeVocab(self, wordsDict, fileVocab):
 
@@ -100,6 +102,32 @@ class Parser:
         for word in self.smoothedSpamDict:
             self.smoothedSpamDict[word]['frequency'] = self.smoothedSpamDict[word]['frequency'] + smoothingValue
             self.smoothedSpamDict[word]['probability'] = self.smoothedSpamDict[word]['frequency']/self.VocabSizeSmoothed
+
+    def writeToFile(self, name):
+
+        #delete the file if it exists
+        if os.path.exists(name):
+            os.remove(name)
+
+        #open a new one
+        f = open(name, "x")
+
+        #generate sorted vocab
+        sortedList = sorted(self.smoothedHamDict)
+
+        index = 1
+        for key in sorted(self.smoothedHamDict.keys()):
+
+            f.write(str(index)+'  '+str(key)+'  '+str(self.smoothedHamDict[key]['frequency'])+'  '+
+                    str(self.smoothedHamDict[key]['probability'])+'  '+str(self.smoothedSpamDict[key]['frequency'])+'  '+
+                    str(self.smoothedSpamDict[key]['probability'])+'\r')
+            index += 1
+
+        if index == 4:
+            quit(0)
+
+
+
 
 
 
