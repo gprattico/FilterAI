@@ -17,7 +17,7 @@ class Parser:
 
         for file in os.scandir(self.directory):
 
-            f = open(file, 'r')
+            f = open(file, 'r', encoding='utf8', errors='replace')
             vocabTemp = re.split('[^a-zA-Z]', f.read())
             vocabTemp2 = list(filter(('').__ne__, vocabTemp))
 
@@ -60,7 +60,7 @@ class Parser:
         self.writeToFile(filename)
 
         #classify each test email
-        self.classifyEmails()
+        #self.classifyEmails()
 
     def mergeVocab(self, wordsDict, fileVocab):
 
@@ -130,7 +130,7 @@ class Parser:
         f.close()
         print('Model created.')
 
-    def classifyEmails(self, directory):
+    #def classifyEmails(self, directory):
 
         #for every file
 
