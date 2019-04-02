@@ -164,7 +164,8 @@ class Parser:
 
         for key in fileDict.keys():
 
-            f.write(str(index)+'  '+str(key)+'  '+str(fileDict[key]['computed'])+'  '+
+            name = key.name
+            f.write(str(index)+'  '+str(name)+'  '+str(fileDict[key]['computed'])+'  '+
                     str(fileDict[key]['hamProb'])+'  '+str(fileDict[key]['spamProb'])+'  '+
                     str(fileDict[key]['actual'])+'  '+str(fileDict[key]['decision'])+'\r')
             index += 1
