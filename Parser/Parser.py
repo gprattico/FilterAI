@@ -1,4 +1,4 @@
-import os, re, copy
+import os, re, copy, math
 
 class Parser:
     def __init__(self, directory):
@@ -130,18 +130,79 @@ class Parser:
         f.close()
         print('Model created.')
 
-    #def classifyEmails(self, directory):
+    def classifyEmails(self, directory):
+
+        fileDict = {}
 
         #for every file
+        for file in os.scandir(directory):
+            print('Classifying '+ str(file))
+            #generate word list
+            f = open(file, 'r', encoding='utf8', errors='replace')
+            vocabTemp = re.split('[^a-zA-Z]', f.read())
+            vocabTemp2 = list(filter(('').__ne__, vocabTemp))
+            fileVocab = [x.lower() for x in vocabTemp2]
 
             #for every word, if its in the model, grab its probability
-            #log sum of all the words and class type
+            fileDict[file] = {}
+            fileDict[file]['hamProb'] = self.calculateHamProbability(fileVocab)
+            fileDict[file]['spamProb'] = self.calculateSpamProbability(fileVocab)
+            fileDict[file]['computed'] = 'ham' if fileDict[file]['hamProb'] > fileDict[file]['spamProb'] else 'spam'
+            fileDict[file]['actual'] = file.name.split("-")[1]
+            fileDict[file]['decision'] = 'right' if fileDict[file]['computed'] == fileDict[file]['actual'] else 'wrong'
 
-            #repeat the calcs for the other class
+        #write to file baseline
+        #delete the file if it exists
+        name = 'baseline-result.txt'
+        if os.path.exists(name):
+            os.remove(name)
 
-            #check which has higher pr
+        #open a new one
+        f = open(name, "x")
 
-            #write to file baseline
+        index = 1
+
+        for key in fileDict.keys():
+
+            f.write(str(index)+'  '+str(key)+'  '+str(fileDict[key]['computed'])+'  '+
+                    str(fileDict[key]['hamProb'])+'  '+str(fileDict[key]['spamProb'])+'  '+
+                    str(fileDict[key]['actual'])+'  '+str(fileDict[key]['decision'])+'\r')
+            index += 1
+
+        f.close()
+        print('baseline created.')
+
+
+
+    def calculateHamProbability(self, vocab):
+
+        score = 0
+
+        for word in vocab:
+            if word in self.smoothedHamDict:
+                score += math.log10(self.smoothedHamDict[word]['probability'])
+            # else:
+            #     print('detected word not in vocab.')
+
+        totalEmails = self.totalEmailsHam + self.totalEmailsSpam
+        score += math.log10(self.totalEmailsHam/totalEmails)
+
+        return score
+
+    def calculateSpamProbability(self, vocab):
+
+        score = 0
+
+        for word in vocab:
+            if word in self.smoothedHamDict:
+                score += math.log10(self.smoothedSpamDict[word]['probability'])
+            # else:
+            #     print('detected word not in vocab.')
+
+        totalEmails = self.totalEmailsHam + self.totalEmailsSpam
+        score += math.log10(self.totalEmailsHam/totalEmails)
+
+        return score
 
 
 
