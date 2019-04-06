@@ -13,6 +13,8 @@ class Parser:
         self.totalEmailsHam = 0
         self.totalEmailsSpam = 0
 
+        self.taskFlag = None
+
     def train(self):
 
         for file in os.scandir(self.directory):
@@ -23,6 +25,28 @@ class Parser:
 
             # lowercase for all elements
             fileVocab = [x.lower() for x in vocabTemp2]
+
+            # Remove stopwords
+            if self.taskFlag == 2:
+                fname = './data/stopWords.txt'
+                content = None
+
+                with open(fname) as f:
+                    content = f.readlines()
+                    content = [x.strip() for x in content]
+                    # content = [x.replace("'", "") for x in content]
+
+                for counter, word in enumerate(fileVocab):
+                    if word in content:
+                        # print('deleting: '+ word) ##logging
+                        del fileVocab[counter]
+
+            # Remove words <= 2 || >= 9
+            elif self.taskFlag == 3:
+                for counter, word in enumerate(fileVocab):
+                    if len(word) <= 2 or len(word) >= 9:
+                        # print('deleting: ' + word) ##logging
+                        del fileVocab[counter]
 
             if file.name.split("-")[1] == 'ham':
                 self.wordsDictHam = self.mergeVocab(self.wordsDictHam, fileVocab)
@@ -56,8 +80,18 @@ class Parser:
         # print('post smoothed frequency and prob:' + str(self.smoothedHamDict['return']['frequency']) + ' ' + str(self.smoothedHamDict['return']['probability']))
         # print(str(self.VocabSizeSmoothed))
 
-        filename = 'model.txt'
-        self.writeToFile(filename)
+        if self.taskFlag == 1:
+            # For baseline experiment
+            filename = 'model.txt'
+            self.writeToFile(filename)
+        elif self.taskFlag == 2:
+            # For task 1.3.1 Experiment 2: Stop-word Filtering
+            filename = 'stopword-model.txt'
+            self.writeToFile(filename)
+        elif self.taskFlag == 3:
+            # For task 1.3.2 Experiment 2: Stop-word Filtering
+            filename = 'wordlength-model.txt'
+            self.writeToFile(filename)
 
         #classify each test email
         #self.classifyEmails()
@@ -153,7 +187,17 @@ class Parser:
 
         #write to file baseline
         #delete the file if it exists
-        name = 'baseline-result.txt'
+
+        if self.taskFlag == 1:
+            # baseline
+            name = 'baseline-result.txt'
+        elif self.taskFlag == 2:
+            # 1.3.1 Experiment 2: Stop-word Filtering
+            name = 'stopword-result.txt'
+        elif self.taskFlag == 3:
+            # 1.3.2 Experiment 3: Word Length Filtering
+            name = 'wordlength-result.txt'
+
         if os.path.exists(name):
             os.remove(name)
 
