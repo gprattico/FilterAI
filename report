@@ -1,0 +1,32 @@
+COMP 472 Project Report
+Giovanni Prattico1 and Nathys Shanmugaratnam2 
+1 ID-27316860 gprattico@gmail.com
+2 ID-26361072 nathys.89@gmail.com
+    1 Introduction
+        1.1 Purpose
+	The purpose of this project was to build a probabilistic model from a predefined set of words extracted from a databank of past emails. 
+        1.2 Technical Details
+	The project is written using python 3.7, with the PyCharm IDE. The project is structured with the main.py inside the root folder, and a Parser.py file which contains the logic of the assignment. The main.py file executes the various parts of the assignment that are separated thusly:
+- Initial Baseline Experiment
+- Stop-word Filtering
+- Word-legth filtering
+Notice that each of these tasks produce their own set of model and result files.
+    2 Experiment
+        2.1 Baseline Experiment Model and the Classifier
+	The preliminary steps involves a recursive gathering of each of the train set files, which then get indexed as spam or ham. Among the various checks, we verify for 0 frequency words, we check the size and compute the probabilities. The probabilities are simply calculated as the quotient of the frequency of a word over the total occurrence of that word. Note that this is done similarly for both the spam and ham. The default smoothing that follows is ‘0.5’. Lastly the results are printed into the model text file. 
+	The next step is creating the classifier. This step involves again the recursive step of gathering of each the set files and calculating the Ham and Spam probability. These calculations are made with assessment and scoring. We start with a score of 0 and increment it based on the log base 10 of the probability value of each word in the spam list or ham list. The final score is determined by the previous incremental scoring in addition with the quotient of the log base 10 of the total of ham or spam divided by the total of all emails. Lastly the results are printed into the baseline text file. 
+        2.2 Stop-word Filtering
+	The process is the same as 2.1, with an additional step. Said step involves cross matching the list of stop words with the words extracted from each train set, and not processing them. In essence each of the matches are ignored and not considered for the calculation. 
+        2.3 Word-length filtering
+	The process is the same as 2.1, with an additional step. Said step involves dismissing all words from the train set which fall below or above the length constraints for a word. The words that don’t pass the requirements are ignored from calculations.  
+        2.4 Comparing the Results
+	COMPARING RESULTS
+    3 Post Completion of Assignment
+        3.1 Difficulties
+	The challenge remains in making sense of the values. The values are calculated with the equations applied from theory. But like all science experiments, one needs a control subject to cross match the values and attempt to make some sense. We did not have access to said values. As a result, we accepted the values we received based on the sole notion that out theory was correct.
+        3.2 Future interests
+	If we plan to continue working on this project, the addition of live training can be an interesting addition. New products and spammers are always on the move. Some implementation of an api call which progressively updates the training set can prove to be an interesting challenge. 
+    4 Conclusion
+This was a project which brought light to the way a program would implement the learning process based on data/content. 
+References
+    1. sources.
